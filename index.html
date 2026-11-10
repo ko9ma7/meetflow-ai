@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetFlow AI | 지능형 음성 전사 & 맞춤 회의록 스튜디오</title>
+  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
+</head>
+<body>
+  <div class="workspace-layout">
+    <!-- Left Sidebar: Notes & Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge">
+          <div class="brand-icon">🎙️</div>
+          <div class="brand-info">
+            <span class="brand-name">MeetFlow AI</span>
+            <span class="brand-desc">스마트 회의록 스튜디오</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="사이드바 접기">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick Action: New Note -->
+      <div class="sidebar-actions">
+        <button class="btn-new-meeting" id="newMeetingBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          새 회의록 작성
+        </button>
+      </div>
+
+      <!-- Search Box -->
+      <div class="sidebar-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="meetingSearchInput" placeholder="회의록 검색... (Ctrl+K)">
+      </div>
+
+      <!-- Meeting History List -->
+      <div class="sidebar-nav-section">
+        <div class="section-title-row">
+          <span class="section-title">내 회의록 목록</span>
+          <span class="section-count" id="meetingCountBadge">0</span>
+        </div>
+        <ul class="meeting-list" id="meetingList">
+          <!-- Dynamic Meeting Items -->
+        </ul>
+      </div>
+
+      <!-- Sidebar Footer Tools -->
+      <div class="sidebar-footer">
+        <button class="footer-btn" id="openDeployGuideBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          웹서비스 배포 가이드
+        </button>
+        <button class="footer-btn" id="openSettingsBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          AI 모델 & STT 설정
+        </button>
+      </div>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main Workspace Document Area -->
+    <main class="main-content">
+      <!-- Top Sticky Action Bar -->
+      <header class="doc-top-bar">
+        <div class="breadcrumbs">
+          <button class="sidebar-expand-btn" id="sidebarExpandBtn" title="사이드바 열기">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <span class="crumb-root">내 회의</span>
+          <span class="crumb-separator">/</span>
+          <span class="crumb-current" id="breadcrumbTitle">새 회의록</span>
+          <span class="save-status-pill" id="saveStatusPill">
+            <span class="save-dot"></span> 자동 저장됨
+          </span>
+        </div>
+
+        <div class="top-bar-actions">
+          <button class="top-btn" id="copyCleanTranscriptBtn" title="화자 실명이 적용된 전사본 전체 복사">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span class="btn-text">전사본 복사</span>
+          </button>
+
+          <button class="top-btn" id="exportMarkdownBtn" title="마크다운 문서로 다운로드">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span class="btn-text">MD 저장</span>
+          </button>
+
+          <!-- Dropdown Button: Start Transcription -->
+          <div class="transcribe-dropdown-wrapper">
+            <button class="btn-transcribe-trigger" id="transcribeTriggerBtn">
+              <span class="sparkle-icon">✨</span>
+              <span class="transcribe-btn-text">받아쓰기 시작하기</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+
+            <div class="dropdown-menu" id="transcribeDropdown">
+              <div class="dropdown-item" id="optMicRecord">
+                <div class="dropdown-item-icon mic-color">🎤</div>
+                <div class="dropdown-item-content">
+                  <div class="item-title">마이크 실시간 회의 녹음</div>
+                  <div class="item-desc">회의실 발언을 실시간 음성인식 및 전사</div>
+                </div>
+              </div>
+
+              <div class="dropdown-item" id="optYoutubeUrl">
+                <div class="dropdown-item-icon yt-color">🎥</div>
+                <div class="dropdown-item-content">
+                  <div class="item-title">유튜브 링크(URL) 직접 전사 (초고속)</div>
+                  <div class="item-desc">영상 재생 대기 없이 URL 입력만으로 고속 전사</div>
+                </div>
+              </div>
+
+              <div class="dropdown-item" id="optLoopbackRecord">
+                <div class="dropdown-item-icon pc-color">🔊</div>
+                <div class="dropdown-item-content">
+                  <div class="item-title">유튜브 & PC 소리 실시간 녹음 (화면 오디오)</div>
+                  <div class="item-desc">화면 공유 탭 오디오 루프백으로 실시간 수신 전사</div>
+                </div>
+              </div>
+
+              <div class="dropdown-item" id="optUploadAudio">
+                <div class="dropdown-item-icon upload-color">📁</div>
+                <div class="dropdown-item-content">
+                  <div class="item-title">오디오 파일 업로드 (대용량 60MB+ 지원)</div>
+                  <div class="item-desc">MP3, WAV, M4A, WEBM 파일 고속 전사</div>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              <div class="dropdown-item" id="optSampleDemo">
+                <div class="dropdown-item-icon sample-color">⚡</div>
+                <div class="dropdown-item-content">
+                  <div class="item-title">1초 샘플 데이터 불러오기</div>
+                  <div class="item-desc">47분 실제 방송/회의 전사본 즉시 테스트</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hidden File Input for Large Audio Upload -->
+      <input type="file" id="audioFileInput" accept="audio/*,.mp3,.wav,.m4a,.webm,.ogg" style="display: none;">
+
+      <!-- Document Canvas -->
+      <div class="document-canvas">
+        <div class="document-page">
+          <!-- Document Icon & Title -->
+          <div class="doc-header-section">
+            <div class="doc-icon-badge" id="docIconBadge" title="아이콘 변경">
+              <span>📋</span>
+            </div>
+            <input type="text" id="docTitleInput" class="doc-title-input" value="새 회의록" placeholder="회의 제목을 입력하세요">
+          </div>
+
+          <!-- Document Properties Grid (Clean, Modern Pill Cards) -->
+          <div class="doc-properties-grid">
+            <div class="property-row">
+              <div class="property-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>회의 일시</span>
+              </div>
+              <div class="property-value">
+                <input type="date" id="docDateInput" class="prop-date-input">
+              </div>
+            </div>
+
+            <div class="property-row">
+              <div class="property-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>참석자</span>
+              </div>
+              <div class="property-value">
+                <input type="text" id="docAttendeesInput" class="prop-text-input" placeholder="참석자 명단 입력 (예: 고호정 팀장, 김대하 수석, 박태훈 의장)">
+              </div>
+            </div>
+
+            <div class="property-row">
+              <div class="property-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                <span>프로젝트/분류</span>
+              </div>
+              <div class="property-value">
+                <input type="text" id="docCategoryInput" class="prop-text-input" value="내 회의" placeholder="프로젝트 태그">
+              </div>
+            </div>
+
+            <div class="property-row">
+              <div class="property-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                <span>오디오 상태</span>
+              </div>
+              <div class="property-value audio-status-cell">
+                <span class="status-indicator" id="audioStatusIndicator">오디오 없음</span>
+                <span class="status-duration" id="audioDurationBadge">00:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Recording Controller (Shown during live recording) -->
+          <div class="recording-banner" id="recordingBanner" style="display: none;">
+            <div class="recording-status-col">
+              <div class="live-rec-badge">
+                <span class="rec-red-dot"></span>
+                <span class="rec-status-text" id="recStatusText">실시간 녹음 및 전사 중...</span>
+              </div>
+              <span class="recording-time" id="recordingTimer">00:00</span>
+            </div>
+
+            <div class="recording-visualizer-col">
+              <canvas id="waveformCanvas" width="360" height="36"></canvas>
+            </div>
+
+            <div class="recording-actions-col">
+              <button class="btn-rec-action pause" id="pauseRecBtn" title="일시 정지">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                일시 정지
+              </button>
+              <button class="btn-rec-action finish" id="stopRecBtn" title="녹음 완료 및 전사">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16"></rect></svg>
+                녹음 완료
+              </button>
+              <button class="btn-rec-action cancel" id="cancelRecBtn" title="취소">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Document Navigation Tabs -->
+          <nav class="doc-tabs-bar">
+            <button class="doc-tab-btn active" data-tab="memo">
+              <span class="tab-icon">✏️</span>
+              <span class="tab-label">회의 메모 & 안건</span>
+            </button>
+            <button class="doc-tab-btn" data-tab="transcription">
+              <span class="tab-icon">🎙️</span>
+              <span class="tab-label">대화 전사 & 화자 매핑</span>
+              <span class="tab-badge" id="dialogueCountBadge">0</span>
+            </button>
+            <button class="doc-tab-btn" data-tab="ai-prompt-studio">
+              <span class="tab-icon">✨</span>
+              <span class="tab-label">AI 분석 & 프롬프트 스튜디오</span>
+              <span class="tab-badge special" id="aiStatusBadge">준비</span>
+            </button>
+          </nav>
+
+          <!-- TAB 1: Meeting Agenda & Notes -->
+          <div class="tab-content active" id="tab-memo">
+            <div class="memo-container">
+              <div class="memo-section">
+                <label class="memo-label">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                  주요 회의 안건 (Agenda)
+                </label>
+                <textarea id="agendaInput" class="memo-textarea agenda" placeholder="1. 프로젝트 진행 상황 공유&#10;2. 시스템 아키텍처 및 연동 규격 논의&#10;3. 차주 마일스톤 및 일정 확정"></textarea>
+              </div>
+
+              <div class="memo-section">
+                <label class="memo-label">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  회의 중 자유 메모 & 사전 자료
+                </label>
+                <textarea id="meetingNotesInput" class="memo-textarea body" placeholder="회의 중 중요한 메모, 참고 링크, 아이디어, 질문 사항을 자유롭게 작성하세요. AI 요약 시 이 메모 내용이 함께 종합 분석됩니다."></textarea>
+              </div>
+
+              <div class="memo-quick-guide">
+                <span class="guide-sparkle">💡</span>
+                <span>상단의 <strong>[받아쓰기 시작하기]</strong> 버튼을 누르면 실시간 마이크, 유튜브/PC 재생음, 또는 60MB+ 오디오 파일에서 대화가 자동으로 전사됩니다.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Transcription & Speaker Mapping (핵심 사용자 기능) -->
+          <div class="tab-content" id="tab-transcription">
+            <!-- 1. Speaker Diarization & Name Mapping Header Card -->
+            <div class="speaker-mapping-card">
+              <div class="speaker-mapping-header">
+                <div class="speaker-title-group">
+                  <span class="speaker-card-icon">👥</span>
+                  <div>
+                    <h3 class="speaker-heading">화자 분리 & 실명 매핑</h3>
+                    <p class="speaker-subheading">감지된 화자별로 실제 이름을 입력하세요. 아래 전사본과 AI 프롬프트에 실시간으로 자동 적용됩니다.</p>
+                  </div>
+                </div>
+                <div class="speaker-header-right">
+                  <div class="speaker-cap-selector">
+                    <span class="cap-label">화자 수 고정:</span>
+                    <select id="speakerCapSelect" class="speaker-cap-select" title="화자가 무한대로 늘어나지 않도록 인원수를 고정합니다">
+                      <option value="auto">자동 감지 (최대 4명)</option>
+                      <option value="2">2명 (1:1 대화)</option>
+                      <option value="3" selected>3명 (기본)</option>
+                      <option value="4">4명 (소규모)</option>
+                      <option value="5">5명 (다자간)</option>
+                    </select>
+                  </div>
+                  <button class="btn-refine-diarization" id="btnRefineDiarization" title="대화 턴(문맥/질문/추임새/피치)을 정밀 분석하여 한명에게 몰린 화자를 완벽하게 재분리합니다">
+                    ✨ AI 화자 분리 교정
+                  </button>
+                  <div class="speaker-count-pill" id="detectedSpeakerCountPill">
+                    감지된 화자: 0명
+                  </div>
+                </div>
+              </div>
+
+              <!-- Speaker Input Grid -->
+              <div class="speaker-inputs-grid" id="speakerInputsGrid">
+                <div class="speaker-empty-placeholder">
+                  아직 전사된 대화가 없습니다. 상단의 [받아쓰기 시작하기]를 통해 회의 음성을 등록하세요.
+                </div>
+              </div>
+
+              <!-- Speaker Action Bar -->
+              <div class="speaker-action-row">
+                <div class="search-transcript-box">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" id="transcriptKeywordFilter" placeholder="전사록 내 키워드 검색...">
+                </div>
+
+                <div class="speaker-actions-right">
+                  <button class="btn-copy-mapped" id="copyMappedTranscriptBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    실명 적용 전사본 복사
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Integrated Audio Player -->
+            <div class="audio-player-dock" id="audioPlayerDock" style="display: none;">
+              <div class="player-left-col">
+                <button class="player-play-btn" id="playerPlayBtn">
+                  <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <svg id="pauseIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <div class="player-time-display">
+                  <span id="playerCurrentTime">00:00</span>
+                  <span class="time-sep">/</span>
+                  <span id="playerDuration">00:00</span>
+                </div>
+              </div>
+
+              <div class="player-center-col">
+                <input type="range" id="playerSeekbar" min="0" max="100" value="0" step="0.1">
+              </div>
+
+              <div class="player-right-col">
+                <div class="speed-selector">
+                  <button class="speed-btn active" data-speed="1">1.0x</button>
+                  <button class="speed-btn" data-speed="1.25">1.25x</button>
+                  <button class="speed-btn" data-speed="1.5">1.5x</button>
+                  <button class="speed-btn" data-speed="2">2.0x</button>
+                </div>
+                <a id="downloadAudioLink" class="btn-download-audio" download="meeting_recording.mp3" title="오디오 파일 다운로드">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </a>
+              </div>
+
+              <audio id="coreAudioElement" preload="metadata"></audio>
+            </div>
+
+            <!-- 3. Dialogue Feed Stream -->
+            <div class="dialogue-feed-wrapper">
+              <div class="dialogue-feed" id="dialogueFeed">
+                <div class="feed-empty-state" id="feedEmptyState">
+                  <div class="empty-icon">🎙️</div>
+                  <h4>대화 기록이 비어 있습니다</h4>
+                  <p>상단의 <strong>[받아쓰기 시작하기]</strong>를 클릭하여 마이크, 유튜브/PC 사운드 또는 오디오 파일을 전사해 보세요.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: AI Analysis & Prompt Studio (프롬프트 방향 지침 & 외부 AI 연동) -->
+          <div class="tab-content" id="tab-ai-prompt-studio">
+            <div class="prompt-studio-container">
+              <!-- Direction Presets Selector -->
+              <div class="studio-card">
+                <div class="studio-card-header">
+                  <span class="studio-icon">🧭</span>
+                  <div>
+                    <h3 class="studio-heading">1. 회의록 정리 방향 지침 선택</h3>
+                    <p class="studio-subheading">원하는 보고서 성격에 맞는 최적화된 AI 프롬프트 지침을 선택하세요.</p>
+                  </div>
+                </div>
+
+                <div class="presets-grid" id="presetsGrid">
+                  <!-- Preset 1: Executive -->
+                  <div class="preset-card active" data-preset="executive">
+                    <div class="preset-header">
+                      <span class="preset-icon">🏢</span>
+                      <span class="preset-title">경영진 핵심 요약</span>
+                    </div>
+                    <p class="preset-desc">3줄 요약, 핵심 의사결정 사항, 비즈니스 리스크 및 대응 방안 중심 보고서</p>
+                  </div>
+
+                  <!-- Preset 2: Action Items -->
+                  <div class="preset-card" data-preset="action_items">
+                    <div class="preset-header">
+                      <span class="preset-icon">📋</span>
+                      <span class="preset-title">실무 액션 태스크</span>
+                    </div>
+                    <p class="preset-desc">담당자별 명확한 업무 분장, 실행 액션 아이템, 마감 기한 및 우선순위</p>
+                  </div>
+
+                  <!-- Preset 3: Technical -->
+                  <div class="preset-card" data-preset="technical">
+                    <div class="preset-header">
+                      <span class="preset-icon">💻</span>
+                      <span class="preset-title">기술 & 엔지니어링</span>
+                    </div>
+                    <p class="preset-desc">시스템 아키텍처 결정사항, API/데이터 규격, 기술 병목 및 구현 태스크</p>
+                  </div>
+
+                  <!-- Preset 4: Client VOC -->
+                  <div class="preset-card" data-preset="sales_interview">
+                    <div class="preset-header">
+                      <span class="preset-icon">🤝</span>
+                      <span class="preset-title">고객 미팅 & VOC</span>
+                    </div>
+                    <p class="preset-desc">고객 핵심 요구사항, 견적/계약 논의, 주요 피드백 및 다음 영업 일정</p>
+                  </div>
+
+                  <!-- Preset 5: Decision Ledger -->
+                  <div class="preset-card" data-preset="qa_decision">
+                    <div class="preset-header">
+                      <span class="preset-icon">⚖️</span>
+                      <span class="preset-title">의사결정 렛저</span>
+                    </div>
+                    <p class="preset-desc">안건별 찬반 논거, 최종 채택안과 논리적 근거, 기각/보류된 옵션 기록</p>
+                  </div>
+
+                  <!-- Preset 6: Team Email -->
+                  <div class="preset-card" data-preset="email">
+                    <div class="preset-header">
+                      <span class="preset-icon">📧</span>
+                      <span class="preset-title">팀 공유 이메일/슬랙</span>
+                    </div>
+                    <p class="preset-desc">비참석자도 1분 만에 파악할 수 있는 부드럽고 명확한 전사 공유문</p>
+                  </div>
+
+                  <!-- Preset 7: Custom -->
+                  <div class="preset-card" data-preset="custom">
+                    <div class="preset-header">
+                      <span class="preset-icon">🎯</span>
+                      <span class="preset-title">사용자 맞춤 지침</span>
+                    </div>
+                    <p class="preset-desc">나만의 특별한 프롬프트 지침과 출력 형식을 직접 지정하여 요약</p>
+                  </div>
+                </div>
+
+                <!-- Custom Prompt Addon -->
+                <div class="custom-instruction-box">
+                  <label class="custom-label">
+                    <span>추가 맞춤 지침 (선택 사항)</span>
+                    <span class="custom-hint">선택한 방향에 추가할 특별 지침이 있다면 적어주세요.</span>
+                  </label>
+                  <textarea id="customInstructionInput" class="custom-textarea" placeholder="예: 재무적 비용 절감 수치를 최우선으로 부각해 줘, 질의응답을 Q&A 형태로 정리해 줘..."></textarea>
+                </div>
+              </div>
+
+              <!-- Complete Prompt Package Exporter (외부 AI 연동의 핵심) -->
+              <div class="studio-card highlight-card">
+                <div class="studio-card-header">
+                  <span class="studio-icon">🤖</span>
+                  <div class="card-title-grow">
+                    <h3 class="studio-heading">2. 외부 AI 전송용 완성형 프롬프트 패키지</h3>
+                    <p class="studio-subheading">실명 매핑된 전사본과 선택한 지침이 결합된 원클릭 프롬프트입니다. ChatGPT, Claude, Gemini에 바로 붙여넣으세요.</p>
+                  </div>
+                  <div class="prompt-action-group">
+                    <button class="btn-copy-prompt-mega" id="copyPromptPackageBtn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                      다른 AI용 프롬프트 패키지 복사
+                    </button>
+                    <button class="btn-run-summary-local" id="runInAppSummaryBtn">
+                      <span class="sparkle">⚡</span>
+                      내장 AI로 즉시 요약 실행
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Prompt Package Code Preview Box -->
+                <div class="prompt-preview-wrapper">
+                  <div class="preview-header">
+                    <span class="preview-tag">클립보드 복사 미리보기</span>
+                    <span class="token-estimate" id="promptTokenEstimate">약 0 토큰</span>
+                  </div>
+                  <pre class="prompt-preview-code" id="promptPreviewCode">회의 전사 데이터가 등록되면 완성형 프롬프트 패키지가 자동으로 생성됩니다.</pre>
+                </div>
+              </div>
+
+              <!-- In-App AI Briefing Result Display -->
+              <div class="studio-card result-card" id="aiResultCard">
+                <div class="studio-card-header">
+                  <span class="studio-icon">📊</span>
+                  <div class="card-title-grow">
+                    <h3 class="studio-heading">3. 생성된 회의록 분석 보고서</h3>
+                    <p class="studio-subheading" id="resultMetaText">선택된 지침에 따라 생성된 브리핑입니다.</p>
+                  </div>
+                  <button class="btn-copy-result" id="copyResultBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    보고서 복사
+                  </button>
+                </div>
+
+                <div class="result-content-body" id="aiResultBody">
+                  <div class="result-empty-hint">
+                    상단의 <strong>[내장 AI로 즉시 요약 실행]</strong>을 누르거나 <strong>[다른 AI용 프롬프트 패키지 복사]</strong>를 눌러 외부 AI에서 고품질 회의록을 생성하세요.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL 0: YouTube Direct URL Modal -->
+  <div class="modal-backdrop" id="youtubeUrlModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🎥</span>
+          <h3 class="modal-title">유튜브 영상 초고속 전사</h3>
+        </div>
+        <button class="modal-close-btn" id="closeYoutubeModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="guide-intro">유튜브 영상 주소(URL)를 입력하시면 영상을 실시간으로 끝까지 틀어둘 필요 없이, 백엔드에서 고속으로 음원을 추출하여 즉시 전사를 완료합니다.</p>
+        
+        <div class="form-group">
+          <label class="form-label">유튜브 링크 주소 (URL)</label>
+          <input type="text" id="youtubeUrlInput" class="form-input" placeholder="https://www.youtube.com/watch?v=... 또는 https://youtu.be/...">
+          <span class="form-hint">영상을 틀어두지 않아도 20분 영상을 약 30초~1분 만에 화자 분리 및 전사합니다.</span>
+        </div>
+
+        <div class="guide-actions">
+          <button class="btn-primary" id="startYoutubeTranscribeBtn">
+            <span class="sparkle">⚡</span> 초고속 전사 시작
+          </button>
+          <button class="btn-secondary" id="cancelYoutubeModalBtn">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 1: YouTube / PC Audio Loopback Guide -->
+  <div class="modal-backdrop" id="loopbackGuideModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🔊</span>
+          <h3 class="modal-title">유튜브 & 컴퓨터 소리 실시간 녹음 안내</h3>
+        </div>
+        <button class="modal-close-btn" id="closeLoopbackModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="guide-intro">유튜브 영상, 줌(Zoom) 또는 컴퓨터에서 재생되는 오디오를 전사하려면 Chrome의 <strong>시스템 오디오 공유</strong> 기능을 사용합니다.</p>
+        
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>[화면/탭 공유 시작] 클릭</strong>
+            <span>녹음 시작 시 브라우저에서 '화면 공유' 팝업이 나타납니다.</span>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>유튜브가 열려있는 탭 또는 전체 화면 선택</strong>
+            <span>원하는 탭(예: YouTube 영상 탭)을 선택합니다.</span>
+          </div>
+        </div>
+
+        <div class="step-card highlight">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>⚠️ [시스템 오디오 공유] 체크박스 반드시 체크!</strong>
+            <span>공유 팝업 좌측 하단의 <strong>'시스템 오디오 공유'</strong>(또는 '탭 오디오 공유') 스위치를 꼭 켜주셔야 소리가 전사 시스템으로 전송됩니다.</span>
+          </div>
+        </div>
+
+        <div class="guide-actions">
+          <button class="btn-primary" id="startLoopbackNowBtn">지금 오디오 캡처 시작하기</button>
+          <button class="btn-secondary" id="cancelLoopbackBtn">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Production Web Service Deployment Guide -->
+  <div class="modal-backdrop" id="deployGuideModal" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🚀</span>
+          <h3 class="modal-title">상용 웹서비스 배포 및 도커(Docker) 구축 가이드</h3>
+        </div>
+        <button class="modal-close-btn" id="closeDeployModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="guide-intro">MeetFlow AI는 사내 서버, 클라우드(AWS/GCP/Railway/Render) 또는 VPS에 즉시 상용 웹서비스로 배포할 수 있도록 완벽히 패키징되어 있습니다.</p>
+
+        <div class="deploy-grid">
+          <div class="deploy-col">
+            <h4 class="deploy-subheading">🐳 방법 1: 도커(Docker) 원클릭 배포</h4>
+            <pre class="code-block"><code># 1. 도커 컨테이너 빌드 & 실행
+docker-compose up -d --build
+
+# 2. 브라우저에서 서비스 접속
+http://your-server-ip:3000</code></pre>
+            <p class="deploy-desc">컨테이너 내부에 Node.js 20 웹서버와 Faster-Whisper GPU/CPU AI 엔진이 모두 번들링되어 즉시 구동됩니다.</p>
+          </div>
+
+          <div class="deploy-col">
+            <h4 class="deploy-subheading">☁️ 방법 2: 클라우드 원클릭 호스팅 (Railway / VPS)</h4>
+            <pre class="code-block"><code># GitHub 연동 후 바로 환경변수 설정
+PORT=3000
+WHISPER_MODEL=base
+# 배포 완료 시 고유 HTTPS 도메인 자동 부여</code></pre>
+            <p class="deploy-desc">Railway, Render, AWS LightSail 등에 Git 푸시만으로 자동 SSL(HTTPS) 인증서와 함께 배포됩니다.</p>
+          </div>
+        </div>
+
+        <div class="modal-bottom-tip">
+          <span class="tip-badge">TIP</span>
+          <span>서버에 NVIDIA GPU가 있는 경우 Dockerfile의 기본 이미지를 <code>nvidia/cuda</code>로 변경하면 전사 속도가 5배~10배 더욱 빨라집니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">⚙️</span>
+          <h3 class="modal-title">AI 모델 & 전사 엔진 설정</h3>
+        </div>
+        <button class="modal-close-btn" id="closeSettingsModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">STT 음성 인식 엔진 (배포 및 사용자 환경)</label>
+          <select id="settingSttEngine" class="form-select">
+            <option value="auto-detect" selected>⚡ 자동 감지 (로컬 PC 서버 우선, 없으면 무료 클라우드/브라우저)</option>
+            <option value="groq-whisper">⚡ Groq Whisper Cloud (무료 API 키 - 1초 초고속 Whisper Large-v3)</option>
+            <option value="gemini-audio">✨ Google Gemini Cloud (무료 API 키 - 대용량/화자분리 최적)</option>
+            <option value="browser-speech">🌐 브라우저 내장 음성인식 (Chrome/Edge - 100% 무료, 키 불필요)</option>
+            <option value="whisper-base">💻 내 PC 로컬 Faster-Whisper (포트 3000 Node.js 구동 시)</option>
+          </select>
+          <span class="form-hint">깃허브 페이지 배포 시 사용자 PC 브라우저 자원과 무료 AI API로 서버비 0원으로 동작합니다.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">내장 AI 요약 엔진</label>
+          <select id="settingSummaryProvider" class="form-select">
+            <option value="local" selected>내장 스마트 휴리스틱 요약기 (API 키 필요 없음 - 완전 무료)</option>
+            <option value="gemini">Google Gemini 2.0 / 1.5 Flash (무료 API 키)</option>
+            <option value="groq">Groq LLaMA 3.3 70B (초고속 무료 API 키)</option>
+            <option value="openai">OpenAI ChatGPT (GPT-4o)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="groqKeyFormGroup">
+          <label class="form-label">Groq API 키 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--primary);font-size:11px;margin-left:6px;text-decoration:none;">(무료 발급 받기 ↗)</a></label>
+          <input type="password" id="settingGroqKey" class="form-input" placeholder="gsk_...">
+          <span class="form-hint">Groq의 무료 플랜으로 고성능 Whisper Large-v3 및 LLaMA 3.3을 무료로 사용할 수 있습니다.</span>
+        </div>
+
+        <div class="form-group" id="apiKeyFormGroup">
+          <label class="form-label">Gemini / OpenAI API 키 <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--primary);font-size:11px;margin-left:6px;text-decoration:none;">(Gemini 무료 발급 ↗)</a></label>
+          <input type="password" id="settingApiKey" class="form-input" placeholder="AIza... 또는 sk-...">
+          <span class="form-hint">API 키는 서버로 전송되지 않고 사용자의 웹 브라우저 localStorage에만 안전하게 보관됩니다.</span>
+        </div>
+
+        <div class="form-group" id="backendUrlFormGroup">
+          <label class="form-label">로컬 백엔드 서버 URL (선택 사항)</label>
+          <input type="text" id="settingBackendUrl" class="form-input" placeholder="http://localhost:3000">
+          <span class="form-hint">본인 PC의 Faster-Whisper를 깃허브 페이지에서 연동하거나 터널을 쓸 때 입력합니다.</span>
+        </div>
+
+        <div class="modal-actions-right">
+          <button class="btn-primary" id="saveSettingsBtn">설정 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- App Main Scripts -->
+  <script src="app.js?v=9"></script>
+</body>
+</html>

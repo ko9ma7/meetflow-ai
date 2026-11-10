@@ -1,0 +1,20 @@
+{
+  "name": "notion-ai-meeting-notes",
+  "version": "1.0.0",
+  "description": "Notion AI 회의 노트 및 실시간 받아쓰기 완벽 복제 시스템",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "notion",
+    "ai",
+    "meeting-notes",
+    "transcription",
+    "whisper",
+    "speech-to-text"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

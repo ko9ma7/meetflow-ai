@@ -1,0 +1,11 @@
+node_modules/
+__pycache__/
+*.pyc
+recordings/*.webm
+recordings/*.mp3
+recordings/*.wav
+data/meetings/*.json
+data/meetings/*.md
+.DS_Store
+Thumbs.db
+*.log

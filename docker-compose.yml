@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  meetflow-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: meetflow-ai-service
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - PYTHONIOENCODING=utf-8
+      - PYTHONUTF8=1
+      # Optional: Add your API keys if you want cloud AI summaries
+      # - GEMINI_API_KEY=your_key_here
+      # - OPENAI_API_KEY=your_key_here
+    volumes:
+      # Persistent meeting records and audio recordings
+      - ./data:/app/data
+      - ./recordings:/app/recordings
+    # Optional GPU support for NVIDIA GPU machines (uncomment to enable 10x faster STT)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]

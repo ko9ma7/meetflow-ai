@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MeetFlow AI | 지능형 음성 전사 & 맞춤 회의록 스튜디오</title>
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
 </head>
@@ -52,6 +52,10 @@
 
       <!-- Sidebar Footer Tools -->
       <div class="sidebar-footer">
+        <button class="footer-btn" id="openUserGuideBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          사용 설명서 & 기능 가이드
+        </button>
         <button class="footer-btn" id="openDeployGuideBtn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
           웹서비스 배포 가이드
@@ -83,6 +87,11 @@
         </div>
 
         <div class="top-bar-actions">
+          <button class="top-btn" id="topUserGuideBtn" title="MeetFlow AI 기능 사용 설명서">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <span class="btn-text">사용 설명서</span>
+          </button>
+
           <button class="top-btn" id="copyCleanTranscriptBtn" title="화자 실명이 적용된 전사본 전체 복사">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <span class="btn-text">전사본 복사</span>
@@ -640,6 +649,83 @@ WHISPER_MODEL=base
     </div>
   </div>
 
+  <!-- MODAL 3: In-App User Manual & Feature Guide -->
+  <div class="modal-backdrop" id="userGuideModal" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📖</span>
+          <h3 class="modal-title">MeetFlow AI 공식 사용 설명서 & 기능 가이드</h3>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <a href="./guide.html" target="_blank" class="top-btn" style="text-decoration: none; padding: 4px 10px; font-size: 12px; color: #4f46e5; border-color: #c7d2fe;" title="새 창에서 전체 문서 열기">
+            <span>새 탭에서 보기 ↗</span>
+          </a>
+          <button class="modal-close-btn" id="closeUserGuideModalBtn">✕</button>
+        </div>
+      </div>
+      <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding: 20px 24px;">
+        <p class="guide-intro" style="margin-bottom: 20px;">
+          MeetFlow AI는 <strong>노션 AI 회의 노트</strong>를 웹 브라우저만으로 100% 무료 구동하는 지능형 회의록 스튜디오입니다. 본 컴퓨터를 켜둘 필요 없이 언제 어디서나 바로 사용할 수 있습니다.
+        </p>
+
+        <div class="deploy-grid" style="margin-bottom: 20px;">
+          <div class="deploy-col">
+            <h4 class="deploy-subheading">🎙️ 1. 세 가지 음성 입력 방식</h4>
+            <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+              <li><strong>마이크 실시간 녹음:</strong> 대면 회의, 발표 현장 발언을 실시간 타임스탬프와 함께 전사</li>
+              <li><strong>유튜브 & PC 소리 녹음:</strong> Zoom, Google Meet 화상회의 및 유튜브 영상 음원 다이렉트 전사 <em>(화면 공유 창에서 [탭 오디오도 공유] 체크 필수)</em></li>
+              <li><strong>오디오 파일 업로드:</strong> MP3, M4A, WAV, WEBM 등 60MB+ 대용량 파일 즉시 전사</li>
+            </ul>
+          </div>
+
+          <div class="deploy-col">
+            <h4 class="deploy-subheading">👥 2. 스마트 화자 분리 & 실명 매핑</h4>
+            <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+              <li><strong>원클릭 실명 매핑:</strong> <code>화자 1 ➔ 김대하 대표</code> 입력 시 수백 개 말풍선 및 요약문 일괄 치환</li>
+              <li><strong>[✨ AI 교정]:</strong> 겹친 목소리나 한 사람에게 몰린 발언을 대화 턴/질문-답변 흐름으로 자동 재분리</li>
+              <li><strong>말풍선 [✂️ 분할] / [🔗 병합]:</strong> 문맥에 맞게 대화를 자유롭게 자르고 붙이기</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deploy-grid" style="margin-bottom: 20px;">
+          <div class="deploy-col">
+            <h4 class="deploy-subheading">✨ 3. 노션 AI 4단 자동 요약</h4>
+            <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+              <li>📌 <strong>회의 개요:</strong> 바쁜 경영진을 위한 2~3줄 고밀도 브리핑</li>
+              <li>💡 <strong>주요 논의 사항:</strong> 카테고리 태그별 핵심 논의 내용 정리</li>
+              <li>🎯 <strong>결정 사항:</strong> 최종 합의 및 확정된 정책/일정</li>
+              <li>✅ <strong>인터랙티브 액션 아이템:</strong> 담당자/마감일이 지정된 클릭 가능한 체크리스트</li>
+              <li>💡 <strong>5대 맞춤 프리셋:</strong> 비즈니스, 기획, 개발 스프린트, 영업, 인터뷰</li>
+            </ul>
+          </div>
+
+          <div class="deploy-col">
+            <h4 class="deploy-subheading">📋 4. 노션 연동 & 마크다운 내보내기</h4>
+            <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+              <li><strong>노션으로 복사:</strong> Notion 페이지에서 <code>Ctrl + V</code> 시 공식 콜아웃, 체크리스트 블록으로 자동 렌더링</li>
+              <li><strong>MD 저장:</strong> 메타데이터와 전사 녹취록이 포함된 <code>.md</code> 파일 즉시 다운로드</li>
+              <li><strong>실명 전사본 복사:</strong> 카톡/슬랙/이메일에 공유하기 좋은 정돈된 텍스트 복사</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; color: #166534; line-height: 1.6;">
+          <strong>🔑 100% 무료 AI 연동 팁 (0원 비용):</strong><br>
+          • <strong>실시간 마이크:</strong> 브라우저 내장 Web Speech API로 키 없이 평생 무료!<br>
+          • <strong>Groq Whisper (1초 초고속):</strong> <a href="https://console.groq.com/keys" target="_blank" style="color:#15803d; font-weight:700;">console.groq.com/keys</a>에서 무료 키 생성 후 설정창에 등록하면 긴 녹음도 1초 만에 전사됩니다.<br>
+          • <strong>Google Gemini:</strong> <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#15803d; font-weight:700;">aistudio.google.com/apikey</a>에서 무료 키 생성 시 초정밀 요약을 무료 제공합니다.
+        </div>
+
+        <a href="./guide.html" target="_blank" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-decoration: none; padding: 12px; font-size: 14px; box-sizing: border-box;">
+          <span>📖 공식 사용 설명서 전체 웹문서(guide.html) 새 창으로 열기</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL 3: Settings Modal -->
   <div class="modal-backdrop" id="settingsModal" style="display: none;">
     <div class="modal-card">
@@ -702,6 +788,6 @@ WHISPER_MODEL=base
   <div class="toast" id="toast"></div>
 
   <!-- App Main Scripts -->
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

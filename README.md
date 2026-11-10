@@ -4,6 +4,9 @@
 >
 > 서버 유지비 0원, 호스팅 비용 0원! 방문자의 웹 브라우저 연산 자원과 무료 AI API(Web Speech API, Groq Whisper, Gemini)를 활용하여 상시 24시간 언제 어디서나 바로 사용할 수 있는 듀얼모드 웹 애플리케이션입니다.
 
+- 🌐 **[MeetFlow AI 라이브 웹서비스 바로가기](https://ko9ma7.github.io/meetflow-ai/)**
+- 📖 **[공식 사용 설명서 & 기능 백서 웹문서 (guide.html)](https://ko9ma7.github.io/meetflow-ai/guide.html)**
+
 ---
 
 ## 🌟 핵심 특징 (듀얼 아키텍처)

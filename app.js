@@ -228,6 +228,10 @@ const el = {
   meetingSearchInput: document.getElementById('meetingSearchInput'),
   meetingList: document.getElementById('meetingList'),
   meetingCountBadge: document.getElementById('meetingCountBadge'),
+  openUserGuideBtn: document.getElementById('openUserGuideBtn'),
+  topUserGuideBtn: document.getElementById('topUserGuideBtn'),
+  userGuideModal: document.getElementById('userGuideModal'),
+  closeUserGuideModalBtn: document.getElementById('closeUserGuideModalBtn'),
   openDeployGuideBtn: document.getElementById('openDeployGuideBtn'),
   openSettingsBtn: document.getElementById('openSettingsBtn'),
 
@@ -517,6 +521,16 @@ function initEventListeners() {
   el.startLoopbackNowBtn?.addEventListener('click', () => {
     el.loopbackGuideModal.style.display = 'none';
     startRecording('loopback');
+  });
+
+  // User Guide Modal
+  const openUserGuide = () => { if (el.userGuideModal) el.userGuideModal.style.display = 'flex'; };
+  const closeUserGuide = () => { if (el.userGuideModal) el.userGuideModal.style.display = 'none'; };
+  el.openUserGuideBtn?.addEventListener('click', openUserGuide);
+  el.topUserGuideBtn?.addEventListener('click', openUserGuide);
+  el.closeUserGuideModalBtn?.addEventListener('click', closeUserGuide);
+  el.userGuideModal?.addEventListener('click', (e) => {
+    if (e.target === el.userGuideModal) closeUserGuide();
   });
 
   // Deploy Guide Modal

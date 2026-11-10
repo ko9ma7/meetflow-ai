@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetFlow AI 공식 사용 설명서 & 기능 가이드북</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="style.css?v=10">
+  <style>
+    :root {
+      --guide-sidebar-w: 260px;
+      --guide-max-w: 960px;
+      --brand-primary: #4f46e5;
+      --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    }
+
+    body {
+      background: #fbfbfa;
+      color: #37352f;
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.68;
+    }
+
+    /* Top Sticky Navigation Bar */
+    .guide-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e9e9e7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+    }
+
+    .guide-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #1f2937;
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .guide-brand-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      border: 1px solid #c7d2fe;
+    }
+
+    .guide-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-app-return {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--brand-gradient);
+      color: #ffffff;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.28);
+      transition: all 0.15s ease;
+    }
+
+    .btn-app-return:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.38);
+    }
+
+    /* Guide Container */
+    .guide-layout {
+      display: flex;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+      gap: 36px;
+    }
+
+    /* Sticky Sidebar Navigation */
+    .guide-toc-sidebar {
+      width: var(--guide-sidebar-w);
+      flex-shrink: 0;
+      position: sticky;
+      top: 76px;
+      height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 12px;
+    }
+
+    .guide-toc-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      margin-bottom: 12px;
+      padding-left: 10px;
+    }
+
+    .guide-toc-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .guide-toc-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #4b5563;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.12s ease;
+    }
+
+    .guide-toc-link:hover {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .guide-toc-link.active {
+      background: #eef2ff;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    /* Main Article Content */
+    .guide-content {
+      flex: 1;
+      max-width: var(--guide-max-w);
+      min-width: 0;
+      background: #ffffff;
+      border: 1px solid #e9e9e7;
+      border-radius: 16px;
+      padding: 44px 48px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .guide-hero {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+
+    .guide-hero-title {
+      font-size: 30px;
+      font-weight: 800;
+      color: #111827;
+      margin: 0 0 12px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .guide-hero-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* Section Styling */
+    .guide-section {
+      margin-bottom: 56px;
+      scroll-margin-top: 86px;
+    }
+
+    .guide-h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 16px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guide-h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 24px 0 10px 0;
+    }
+
+    .feature-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: #fafafa;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.15s ease;
+    }
+
+    .feature-card:hover {
+      border-color: #c7d2fe;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+    }
+
+    .feature-card-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .feature-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 6px 0;
+    }
+
+    .feature-card-desc {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* Callout Boxes */
+    .guide-callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .guide-callout.info {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .guide-callout.tip {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+    }
+
+    .guide-callout.warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+
+    .guide-callout-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    /* Comparison Table */
+    .guide-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13.5px;
+    }
+
+    .guide-table th, .guide-table td {
+      border: 1px solid #e5e7eb;
+      padding: 12px 14px;
+      text-align: left;
+    }
+
+    .guide-table th {
+      background: #f9fafb;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .guide-table tr:hover td {
+      background: #fcfcfc;
+    }
+
+    /* Step Badge & Timeline */
+    .step-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .step-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--brand-gradient);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+    }
+
+    .step-body {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 6px 0;
+    }
+
+    .step-desc {
+      font-size: 13.5px;
+      color: #4b5563;
+      margin: 0;
+    }
+
+    /* Keyboard Shortcut Pill */
+    .kbd-pill {
+      display: inline-block;
+      padding: 2px 6px;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: monospace;
+      color: #374151;
+      font-weight: 600;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 860px) {
+      .guide-toc-sidebar {
+        display: none;
+      }
+      .guide-content {
+        padding: 24px 20px;
+      }
+      .guide-layout {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="guide-navbar">
+    <a href="./index.html" class="guide-brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #4f46e5;">
+        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+        <line x1="12" y1="19" x2="12" y2="22"></line>
+      </svg>
+      <span>MeetFlow AI</span>
+      <span class="guide-brand-badge">공식 설명서 v2.0</span>
+    </a>
+    <div class="guide-nav-actions">
+      <a href="./index.html" class="btn-app-return">
+        <span>스튜디오로 이동하기</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="guide-layout">
+    <!-- Sticky Table of Contents -->
+    <nav class="guide-toc-sidebar">
+      <div class="guide-toc-title">목차 (Contents)</div>
+      <ul class="guide-toc-list">
+        <li><a href="#overview" class="guide-toc-link active">🌟 1. 서비스 개요 & 아키텍처</a></li>
+        <li><a href="#recording" class="guide-toc-link">🎙️ 2. 음성 녹음 & 실시간 전사</a></li>
+        <li><a href="#speakers" class="guide-toc-link">👥 3. 스마트 화자 분리 & 실명 매핑</a></li>
+        <li><a href="#ai-summary" class="guide-toc-link">✨ 4. 노션 AI 스타일 4단 요약</a></li>
+        <li><a href="#export" class="guide-toc-link">📋 5. 노션 블록 복사 & 내보내기</a></li>
+        <li><a href="#free-keys" class="guide-toc-link">🔑 6. 무료 AI 키 연동 (0원 사용)</a></li>
+        <li><a href="#faq" class="guide-toc-link">❓ 7. 자주 묻는 질문 (FAQ)</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Documentation Content -->
+    <main class="guide-content">
+      <header class="guide-hero">
+        <h1 class="guide-hero-title">📖 MeetFlow AI 사용자 가이드 & 기능 설명서</h1>
+        <p class="guide-hero-subtitle">
+          노션(Notion)의 핵심 기능인 <strong>'AI 회의 노트 및 실시간 받아쓰기'</strong>를 웹 브라우저만으로 100% 무료 구현한 지능형 회의록 스튜디오입니다. 본 컴퓨터를 켜둘 필요 없이 언제 어디서나 바로 사용할 수 있습니다.
+        </p>
+      </header>
+
+      <!-- SECTION 1 -->
+      <section id="overview" class="guide-section">
+        <h2 class="guide-h2">🌟 1. 서비스 개요 & 듀얼 아키텍처</h2>
+        <p>
+          MeetFlow AI는 <strong>"서버 호스팅 비용 0원, 24시간 가동, 강력한 방문자 PC 연산 활용"</strong>을 기본 철학으로 설계되었습니다. GitHub Pages 서버리스 모드와 로컬 오프라인 고성능 모드를 완벽하게 지원합니다.
+        </p>
+
+        <div class="feature-card-grid">
+          <div class="feature-card">
+            <div class="feature-card-icon">☁️</div>
+            <h3 class="feature-card-title">GitHub Pages 서버리스 모드</h3>
+            <p class="feature-card-desc">내 컴퓨터를 꺼두어도 24시간 전 세계 어디서나 접속 가능. 방문자의 브라우저 로컬 저장소와 무료 AI API를 직결하여 서버 비용 0원 구현.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">💻</div>
+            <h3 class="feature-card-title">로컬 PC 단독 실행 모드</h3>
+            <p class="feature-card-desc">인터넷 연결이 불안정한 환경이나 고보안 회의 시 로컬에서 <code>node server.js</code>를 실행하면 내장 Faster-Whisper GPU/CPU AI 엔진이 로컬 단독 전사를 수행.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">🔒</div>
+            <h3 class="feature-card-title">강력한 프라이버시 & 무서버 저장</h3>
+            <p class="feature-card-desc">중앙 서버에 대화 내용이나 음성이 저장되지 않고 사용자의 컴퓨터 브라우저 내부(<code>localStorage</code>)에만 암호화 보관되므로 안전합니다.</p>
+          </div>
+        </div>
+
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>기능 항목</th>
+              <th>🌐 깃허브 페이지 (서버리스)</th>
+              <th>💻 로컬 PC 모드 (node server.js)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>호스팅 & 접속</strong></td>
+              <td>GitHub Pages 상시 가동 (PC 꺼도 됨)</td>
+              <td>로컬 호스트 (<code>localhost:3000</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>데이터 저장소</strong></td>
+              <td>접속자 브라우저 <code>localStorage</code></td>
+              <td>로컬 JSON 파일 (<code>data/meetings/</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>마이크 실시간 전사</strong></td>
+              <td>Web Speech API (무료, 무제한)</td>
+              <td>Faster-Whisper 16kHz 스트리밍</td>
+            </tr>
+            <tr>
+              <td><strong>오디오/영상 파일 전사</strong></td>
+              <td>Groq Whisper Large-v3 (무료, 1초 완성)</td>
+              <td>Faster-Whisper 로컬 오디오 디코딩</td>
+            </tr>
+            <tr>
+              <td><strong>AI 4단 요약</strong></td>
+              <td>브라우저 내장 스마트 요약기 / Gemini</td>
+              <td>Ollama / Gemini / Groq / OpenAI</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section id="recording" class="guide-section">
+        <h2 class="guide-h2">🎙️ 2. 음성 녹음 & 실시간 전사 방법</h2>
+        <p>
+          우측 상단의 <strong>[✨ 받아쓰기 시작하기 ∨]</strong> 버튼을 누르면 3가지 방식의 음성 입력이 가능합니다:
+        </p>
+
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h3 class="step-title">🎙️ 마이크 실시간 회의 녹음 (대면 회의 / 발표)</h3>
+            <p class="step-desc">
+              회의실의 마이크나 노트북 내장 마이크를 통해 발화자의 목소리를 실시간으로 캡처합니다. 말하는 즉시 화면에 실시간 파형(Waveform)이 물결치며 문장이 끝나면 자동으로 타임스탬프(<code>[MM:SS]</code>)가 찍힌 말풍선이 생성됩니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h3 class="step-title">🔊 유튜브 & PC 소리 녹음 (화상회의 Zoom/Meet, 유튜브 영상)</h3>
+            <p class="step-desc">
+              온라인 화상 회의(Google Meet, Zoom 웹 탭, Teams)나 유튜브 영상의 소리를 루프백으로 직접 녹음하여 전사합니다.
+            </p>
+            <div class="guide-callout warning">
+              <span class="guide-callout-icon">⚠️</span>
+              <div>
+                <strong>[필독 핵심 팁] 크롬 화면 공유 창에서 [탭 오디오도 공유]를 꼭 켜주세요!</strong><br>
+                화면 공유 팝업이 뜰 때 <code>[Chrome 탭]</code>을 선택하고, 창 좌측 하단의 <strong>[탭 오디오도 공유]</strong> 체크박스를 켜주셔야 영상 소리가 시스템으로 입력됩니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h3 class="step-title">📁 오디오 파일 업로드 (스마트폰 음성 메모, 녹음기 파일)</h3>
+            <p class="step-desc">
+              기존에 녹음해 둔 <code>.mp3</code>, <code>.m4a</code>, <code>.wav</code>, <code>.webm</code> 파일을 드래그 앤 드롭하거나 선택하여 전사할 수 있습니다. 60MB 이상의 대용량 오디오도 고속으로 처리됩니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section id="speakers" class="guide-section">
+        <h2 class="guide-h2">👥 3. 스마트 화자 분리 & 실명 매핑 가이드</h2>
+        <p>
+          누가 어떤 말을 했는지 정확히 구분하는 것은 회의록의 핵심입니다. MeetFlow AI는 <strong>F0 피치(음높이), MFCC 음향 클러스터링, 대화 턴(질문/호응/답변) 분석</strong>을 결합하여 자동으로 화자를 구분합니다.
+        </p>
+
+        <div class="feature-card-grid">
+          <div class="feature-card">
+            <div class="feature-card-icon">🏷️</div>
+            <h3 class="feature-card-title">원클릭 실명 매핑</h3>
+            <p class="feature-card-desc">
+              화면 상단 화자 바에서 <code>화자 1 ➔ 김대하 대표</code>, <code>화자 2 ➔ 고호정 팀장</code>으로 이름을 입력하면, 수백 개의 대화 말풍선과 향후 생성될 AI 요약문에 즉시 일괄 적용됩니다.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">✨</div>
+            <h3 class="feature-card-title">[✨ AI 화자 분리 교정] 버튼</h3>
+            <p class="feature-card-desc">
+              목소리가 겹치거나 한 사람에게 발언이 몰렸을 때 버튼을 한 번 클릭하면, 질문과 답변의 문맥 흐름을 AI가 다시 읽어 화자 경계를 즉시 자연스럽게 재분리합니다.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">✂️</div>
+            <h3 class="feature-card-title">말풍선 수동 [✂️ 분할] & [🔗 병합]</h3>
+            <p class="feature-card-desc">
+              각 대화 말풍선 우측 상단에 마우스를 올리면 나타나는 [✂️ 분할] 버튼으로 중간 문장을 나누거나, [🔗 병합] 버튼으로 바로 윗 발언과 하나로 합칠 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section id="ai-summary" class="guide-section">
+        <h2 class="guide-h2">✨ 4. 노션 AI 스타일 4단 자동 요약</h2>
+        <p>
+          전사가 완료된 후 상단의 <strong>[✨ AI 요약 생성]</strong> 버튼을 누르면, 노션(Notion)의 유료 AI 애드온과 완전히 동일한 4단계 구조화 문서가 자동으로 생성됩니다:
+        </p>
+
+        <div class="step-item">
+          <div class="step-number">📌</div>
+          <div class="step-body">
+            <h3 class="step-title">1단계: 회의 개요 (Executive Summary)</h3>
+            <p class="step-desc">회의의 핵심 목적과 결과를 2~3줄로 압축하여 바쁜 경영진도 10초 만에 파악할 수 있는 고밀도 브리핑을 제공합니다.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">💡</div>
+          <div class="step-body">
+            <h3 class="step-title">2단계: 주요 논의 사항 (Key Discussions)</h3>
+            <p class="step-desc">안건별로 논의된 세부 내용과 참석자들의 핵심 의견을 카테고리 태그(<code>[시스템 설계]</code>, <code>[일정 검토]</code>)와 함께 일목요연하게 정리합니다.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">🎯</div>
+          <div class="step-body">
+            <h3 class="step-title">3단계: 핵심 결정 사항 (Decisions Made)</h3>
+            <p class="step-desc">회의 중 최종 합의되거나 확정된 정책, 규격, 일정 등을 명확하게 불릿 포인트로 제시합니다.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">✅</div>
+          <div class="step-body">
+            <h3 class="step-title">4단계: 인터랙티브 액션 아이템 (Action Items)</h3>
+            <p class="step-desc">
+              누가(담당자), 언제까지(마감일), 무엇을 해야 하는지 체크리스트 형태로 추출됩니다. 웹 화면에서 직접 클릭하여 완료 체크(<code>[x]</code>)할 수 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="guide-callout tip">
+          <span class="guide-callout-icon">💡</span>
+          <div>
+            <strong>맞춤형 5대 프롬프트 프리셋 탑재</strong><br>
+            회의 성격에 따라 <code>일반 비즈니스</code>, <code>전략/기획 검토</code>, <code>개발/기술 스프린트</code>, <code>영업/고객 미팅</code>, <code>심층 인터뷰/HR</code> 프리셋을 선택하여 최적화된 서식의 보고서를 얻을 수 있습니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section id="export" class="guide-section">
+        <h2 class="guide-h2">📋 5. 노션 블록 복사 & 마크다운 내보내기</h2>
+        <p>
+          작성된 회의록은 노션(Notion)과의 호환성을 1순위로 고려하여 다양한 복사 및 저장 방식을 제공합니다:
+        </p>
+
+        <div class="feature-card-grid">
+          <div class="feature-card">
+            <div class="feature-card-icon">📋</div>
+            <h3 class="feature-card-title">원클릭 노션으로 복사</h3>
+            <p class="feature-card-desc">
+              AI 요약 탭 우측 상단의 <strong>[노션으로 복사]</strong> 버튼을 누른 후, 본인의 실제 Notion 빈 페이지에서 <span class="kbd-pill">Ctrl</span> + <span class="kbd-pill">V</span>를 누르면 노션 공식 콜아웃 상자, 체크박스, 볼드 서식이 그대로 완벽 렌더링됩니다.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">💾</div>
+            <h3 class="feature-card-title">마크다운(.md) 파일 저장</h3>
+            <p class="feature-card-desc">
+              상단 바의 <strong>[MD 저장]</strong> 버튼을 누르면 회의 메타데이터, 사전 안건, AI 요약, 전체 전사 녹취록이 모두 포함된 <code>.md</code> 파일이 즉시 다운로드됩니다.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">👥</div>
+            <h3 class="feature-card-title">실명 적용 전사본 복사</h3>
+            <p class="feature-card-desc">
+              카카오톡, 슬랙, 이메일에 전사본을 공유할 때, 타임스탬프와 매핑된 화자 이름(예: <code>[10:15] 김대하 대표: 네 알겠습니다.</code>)이 반영된 클린 텍스트가 복사됩니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6 -->
+      <section id="free-keys" class="guide-section">
+        <h2 class="guide-h2">🔑 6. 100% 무료 AI 연동 안내 (0원 비용 가이드)</h2>
+        <p>
+          MeetFlow AI는 API 키가 없어도 <strong>내장 브라우저 스마트 요약기</strong>로 즉시 사용 가능합니다. 하지만 1초 만에 완료되는 초고속 Whisper나 Google의 최신 모델을 사용하고 싶다면 아래의 <strong>평생 무료 API 키</strong>를 등록해 보세요:
+        </p>
+
+        <div class="step-item">
+          <div class="step-number">⚡</div>
+          <div class="step-body">
+            <h3 class="step-title">Groq Whisper Large-v3 (추천: 1초 초고속 무료 전사)</h3>
+            <p class="step-desc">
+              1. <a href="https://console.groq.com/keys" target="_blank" style="color: #4f46e5; font-weight: 600;">console.groq.com/keys</a>에 접속하여 구글 계정으로 1초 로그인합니다.<br>
+              2. <strong>[Create API Key]</strong>를 눌러 무료 키를 복사합니다. (신용카드 등록 불필요, 100% 무료)<br>
+              3. 스튜디오 좌측 하단 <strong>[⚙️ AI 모델 & STT 설정]</strong>에 키를 붙여넣고 저장합니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">✨</div>
+          <div class="step-body">
+            <h3 class="step-title">Google Gemini 2.5 Flash (초정밀 무료 AI 회의 요약)</h3>
+            <p class="step-desc">
+              1. <a href="https://aistudio.google.com/apikey" target="_blank" style="color: #4f46e5; font-weight: 600;">aistudio.google.com/apikey</a>에 접속합니다.<br>
+              2. <strong>[Create API key]</strong> 버튼을 눌러 무료 키를 생성합니다.<br>
+              3. 스튜디오 설정창의 <strong>Gemini API 키</strong> 칸에 붙여넣습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7 -->
+      <section id="faq" class="guide-section">
+        <h2 class="guide-h2">❓ 7. 자주 묻는 질문 (FAQ)</h2>
+        <div class="guide-callout info">
+          <span class="guide-callout-icon">Q</span>
+          <div>
+            <strong>Q. 내 컴퓨터를 꺼두어도 다른 사람들이 제 깃허브 페이지에 접속할 수 있나요?</strong><br>
+            A. 네! 깃허브 페이지(GitHub Pages)는 마이크로소프트 GitHub의 클라우드 서버에서 24시간 365일 무중단으로 동작하므로, 본인의 컴퓨터나 노트북을 꺼두셔도 전 세계 누구나 주소만 알면 언제든 접속하여 사용할 수 있습니다.
+          </div>
+        </div>
+
+        <div class="guide-callout info">
+          <span class="guide-callout-icon">Q</span>
+          <div>
+            <strong>Q. 스마트폰이나 태블릿(아이패드 등)에서도 동작하나요?</strong><br>
+            A. 네! 반응형 웹 인터페이스로 제작되어 모바일 화면에서도 자동으로 크기가 조절되며, 스마트폰 마이크 녹음 및 실시간 전사, AI 요약 확인이 완벽하게 지원됩니다.
+          </div>
+        </div>
+
+        <div class="guide-callout info">
+          <span class="guide-callout-icon">Q</span>
+          <div>
+            <strong>Q. 유튜브 소리가 녹음되지 않거나 전사가 안 돼요.</strong><br>
+            A. 크롬 화면 공유 창이 뜰 때 반드시 <code>[Chrome 탭]</code>을 선택하고, 창 하단의 <strong>[탭 오디오도 공유]</strong> 체크박스를 켜주셔야 합니다. 또한 유튜브 영상 플레이어 자체의 볼륨이 0(음소거)으로 되어 있지 않은지 확인해 주세요.
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Return Banner -->
+      <div style="margin-top: 48px; padding: 24px; background: #eef2ff; border-radius: 12px; text-align: center; border: 1px solid #c7d2fe;">
+        <h3 style="margin: 0 0 8px 0; color: #1e1b4b; font-size: 18px;">지금 바로 스마트 회의록을 작성해 보세요!</h3>
+        <p style="margin: 0 0 16px 0; color: #4338ca; font-size: 14px;">설치 없이 브라우저에서 바로 실시간 받아쓰기와 노션 AI 요약을 경험할 수 있습니다.</p>
+        <a href="./index.html" class="btn-app-return" style="padding: 10px 22px; font-size: 14px;">
+          MeetFlow AI 스튜디오 열기 👉
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scroll and active link highlight
+    const tocLinks = document.querySelectorAll('.guide-toc-link');
+    const sections = document.querySelectorAll('.guide-section');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 120;
+        if (window.pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -381,6 +381,12 @@ function triggerAutoSave() {
 async function initApp() {
   initEventListeners();
   initAudioPlayer();
+
+  if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    const localBtn = document.getElementById('openLocalGpuBtn');
+    if (localBtn) localBtn.style.display = 'inline-flex';
+  }
+
   await loadMeetingList();
 
   // If there are meetings, open the latest one; otherwise create a new one
@@ -518,9 +524,31 @@ function initEventListeners() {
   // Loopback Modal
   el.closeLoopbackModalBtn?.addEventListener('click', () => el.loopbackGuideModal.style.display = 'none');
   el.cancelLoopbackBtn?.addEventListener('click', () => el.loopbackGuideModal.style.display = 'none');
-  el.startLoopbackNowBtn?.addEventListener('click', () => {
+  el.startLoopbackNowBtn?.addEventListener('click', async () => {
     el.loopbackGuideModal.style.display = 'none';
+    const hasBack = await StorageAdapter.hasBackend();
+    if (!hasBack && !state.settings.groqKey) {
+      const modal = document.getElementById('gpuChoiceModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        return;
+      }
+    }
     startRecording('loopback');
+  });
+
+  // GPU Choice Modal
+  const gpuChoiceModal = document.getElementById('gpuChoiceModal');
+  document.getElementById('closeGpuChoiceModalBtn')?.addEventListener('click', () => {
+    if (gpuChoiceModal) gpuChoiceModal.style.display = 'none';
+  });
+  document.getElementById('proceedRecordingWithoutKeyBtn')?.addEventListener('click', () => {
+    if (gpuChoiceModal) gpuChoiceModal.style.display = 'none';
+    startRecording('loopback');
+  });
+  document.getElementById('openSettingsFromChoiceBtn')?.addEventListener('click', () => {
+    if (gpuChoiceModal) gpuChoiceModal.style.display = 'none';
+    el.openSettingsBtn?.click();
   });
 
   // User Guide Modal
@@ -1776,7 +1804,17 @@ async function startRecording(sourceType = 'mic') {
 
     // UI Updates
     el.recordingBanner.style.display = 'flex';
-    el.recStatusText.textContent = sourceType === 'loopback' ? '유튜브 / PC 소리 실시간 듣는 중 (5초마다 전사)...' : '마이크 실시간 녹음 중...';
+    let statusText = '마이크 실시간 녹음 중...';
+    if (sourceType === 'loopback') {
+      if (hasBack) {
+        statusText = '유튜브 / PC 소리 내 PC GPU 전사 중 (5초마다)...';
+      } else if (state.settings.groqKey) {
+        statusText = '유튜브 / PC 소리 클라우드 GPU 전사 중 (5초마다)...';
+      } else {
+        statusText = '유튜브 / PC 소리 녹음 중 (완료 후 전사)...';
+      }
+    }
+    el.recStatusText.textContent = statusText;
     el.recordingTimer.textContent = '00:00';
 
     clearInterval(state.timerInterval);
